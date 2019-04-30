@@ -10,7 +10,7 @@ public class List_inChainOfNodes{
       Construct an empty list
      */
     public List_inChainOfNodes() {
-        headSentinel = new Node( null, null);
+        headSentinel = new Node( null, null, null);
     }
 
     /**
@@ -34,13 +34,32 @@ public class List_inChainOfNodes{
        format:
            # elements [element0,element1,element2,]
       */
-    public String toString() {
+   /*  public String toString() {
         String stringRep = size() + " elements [";
 
         for( Node node = headSentinel.getNextNode()
            ; node != null
            ; node = node.getNextNode() )
             stringRep += node.getCargo() + ",";
+        return stringRep + "]";
+    } */
+	
+	/**
+      Demo use of links to previous Nodes.
+
+      @return a string representation of this list,
+              iterating through the list
+              from tail to head.
+      format, using ` as separator
+          [element0`element1`element2`]
+     */
+    public String toString() {
+        String stringRep = "tail-first [";
+
+        for( Node node = getNode(size() - 1)
+			; node != null
+		    ; node = node.getPreviousNode())
+            stringRep += node.getCargo() + "`";
         return stringRep + "]";
     }
 
@@ -52,7 +71,9 @@ public class List_inChainOfNodes{
      */
      public boolean addAsHead( Object val) {
         headSentinel.setNextNode(
-          new Node( val, headSentinel.getNextNode()));
+          new Node( val, headSentinel.getNextNode(), null));
+		if (size() > 1)
+		getNode(1).setPreviousNode(headSentinel.getNextNode());
         return true;
      }
 
@@ -120,6 +141,9 @@ public class List_inChainOfNodes{
           in the augmented list */
           getNodeBefore( index).setNextNode( newNode);
         newNode.setNextNode( afterNew);
+		newNode.setPreviousNode( getNodeBefore(index));
+		if(afterNew != null)
+		afterNew.setPreviousNode(newNode);
         return true;
     }
 
@@ -137,6 +161,8 @@ public class List_inChainOfNodes{
         Node ax = before.getNextNode();
         Object saveForReturn = ax.getCargo();
         before.setNextNode( ax.getNextNode());
+		if(ax.getNextNode() != null)
+			ax.getNextNode().setPreviousNode(before);
         return saveForReturn;
     }
 }
