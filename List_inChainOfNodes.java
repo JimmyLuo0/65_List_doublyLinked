@@ -56,7 +56,7 @@ public class List_inChainOfNodes{
     public String toString() {
         String stringRep = "tail-first [";
 
-        for( Node node = getNode(size() - 1)
+        for( Node node = headSentinel.getPreviousNode()
 			; node != null
 		    ; node = node.getPreviousNode())
             stringRep += node.getCargo() + "`";
@@ -70,10 +70,12 @@ public class List_inChainOfNodes{
       @return true, in keeping with conventions yet to be discussed
      */
      public boolean addAsHead( Object val) {
-        headSentinel.setNextNode(
-          new Node( val, headSentinel.getNextNode(), null));
+		Node newNode = new Node( val, headSentinel.getNextNode(), null);
+        headSentinel.setNextNode(newNode);
+        if(size() == 1)
+			headSentinel.setPreviousNode(newNode);
 		if (size() > 1)
-		getNode(1).setPreviousNode(headSentinel.getNextNode());
+			getNode(1).setPreviousNode(headSentinel.getNextNode());
         return true;
      }
 
@@ -136,6 +138,9 @@ public class List_inChainOfNodes{
       (that is, increase the index associated with each).
      */
     public boolean add( int index, Object value) {
+		if (index == 0)
+			return addAsHead(value);
+		else {
         Node newNode = new Node( value);
         Node afterNew = /* the node that should follow newNode
           in the augmented list */
@@ -143,8 +148,11 @@ public class List_inChainOfNodes{
         newNode.setNextNode( afterNew);
 		newNode.setPreviousNode( getNodeBefore(index));
 		if(afterNew != null)
-		afterNew.setPreviousNode(newNode);
+			afterNew.setPreviousNode(newNode);
+	    if(index == size() - 1)
+			headSentinel.setPreviousNode(newNode);
         return true;
+		}
     }
 
 
